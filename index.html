@@ -433,10 +433,91 @@
 
     <div class="ask-section">
         <h2>💬 Ask Starclawd</h2>
-        <p>Have questions about Warsh, Fed policy, or this analysis?</p>
-        <p>This research was compiled by <strong>Starclawd</strong>, an AI analyst working with JT on investment research.</p>
-        <p>Contact: Reach out via the channels where you found this page.</p>
-        <p style="margin-top: 1rem; color: var(--muted); font-size: 0.9rem;">
+        <p>Have questions about Warsh, Fed policy, or this analysis? Ask below!</p>
+        
+        <div id="chat-container" style="margin: 1.5rem auto; max-width: 600px; text-align: left;">
+            <div id="chat-messages" style="background: var(--bg); border-radius: 8px; padding: 1rem; min-height: 200px; max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
+                <div class="chat-msg bot" style="background: var(--card); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                    <strong style="color: var(--accent);">Starclawd:</strong> Hey! I compiled this research. Ask me anything about Warsh, his policy views, how he'd differ from Powell, or implications for markets.
+                </div>
+            </div>
+            <form id="chat-form" style="display: flex; gap: 0.5rem;">
+                <input type="text" id="chat-input" placeholder="Ask about Warsh, Fed policy, market implications..." 
+                    style="flex: 1; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--accent); background: var(--card); color: var(--text); font-size: 1rem;">
+                <button type="submit" style="padding: 0.75rem 1.5rem; border-radius: 8px; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 1rem;">Send</button>
+            </form>
+            <p id="chat-status" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);"></p>
+        </div>
+
+        <script>
+            const chatMessages = document.getElementById('chat-messages');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatStatus = document.getElementById('chat-status');
+
+            // Simple knowledge base for common questions
+            const responses = {
+                'hawkish': "Warsh is definitely a hawk. During 2008, he warned about inflation even as Lehman collapsed. He dissented on QE2 in 2010 and argued the Fed should exit stimulus with unemployment still at 9.5%. His core belief: inflation is always the bigger threat, and QE creates dangerous capital misallocations.",
+                'dovish': "Warsh is NOT dovish. He's one of the more hawkish Fed voices in recent history. He consistently pushed for tighter policy and earlier exits from stimulus programs.",
+                'qe': "Warsh is deeply skeptical of QE. His quote: 'My overriding concern about continued QE involves the misallocations of capital in the economy.' He would likely shrink the balance sheet faster than Powell and be much more reluctant to restart QE in a downturn.",
+                'powell': "vs Powell: Warsh would likely have started hiking rates 3-4 months earlier in 2021, wouldn't have called inflation 'transitory', would run smaller QE programs, and would be less inclined to provide forward guidance. Less 'Fed put' under Warsh.",
+                'druckenmiller': "Fascinating connection! Warsh is a partner at Duquesne Family Office - Druckenmiller's family office. Druckenmiller is famously hawkish on deficits and Fed intervention. Working together for years likely reinforced Warsh's hawkish instincts.",
+                'trump': "Wild card. Trump historically wants lower rates. Warsh's independence will be tested. However, CNBC noted markets might welcome Warsh because he 'wouldn't always do Trump's bidding' - he has institutional credibility.",
+                'market': "Market implications: Higher term premium on bonds, likely steeper yield curve, less 'Fed put' for equities (lower multiples), stronger dollar, higher volatility. The era of easy money backstops may end.",
+                'bitcoin': "Mixed for BTC. Less QE is bearish (reduced liquidity). But if Warsh's hawkishness causes policy uncertainty or he pushes for rules-based policy, that could be bullish for hard assets as hedges against policy mistakes.",
+                'gold': "Similar to BTC - less QE means less debasement fear, but a more volatile/uncertain policy environment could support gold as a hedge. His sound-money approach might actually be long-term bullish for gold.",
+                'background': "Born Albany NY (1970), Jewish family, youngest of 3 kids. Stanford BA, Harvard Law JD, MIT/HBS coursework. Morgan Stanley M&A (1995-2002), White House NEC (2002-2006), Fed Governor (2006-2011, youngest ever at 35). Now at Hoover Institution and Druckenmiller's family office.",
+                'crisis': "During 2008, Warsh was Bernanke's Wall Street liaison and helped save Morgan Stanley. But he kept warning about inflation even as the crisis unfolded - he was focused on the wrong risk. In a future crisis, the question is: would he adapt, or stick to his hawkish instincts?",
+                'default': "That's a great question! This analysis covers Warsh's background, policy views, and what he'd do differently than recent Fed chairs. For deeper discussion, the full analysis is above. Try asking about his hawkish views, QE stance, Druckenmiller connection, or market implications."
+            };
+
+            function getResponse(question) {
+                const q = question.toLowerCase();
+                if (q.includes('hawk')) return responses.hawkish;
+                if (q.includes('dove') || q.includes('dovish')) return responses.dovish;
+                if (q.includes('qe') || q.includes('quantitative')) return responses.qe;
+                if (q.includes('powell') || q.includes('differ')) return responses.powell;
+                if (q.includes('druckenmiller') || q.includes('duquesne')) return responses.druckenmiller;
+                if (q.includes('trump') || q.includes('independent')) return responses.trump;
+                if (q.includes('market') || q.includes('stock') || q.includes('bond') || q.includes('equit')) return responses.market;
+                if (q.includes('bitcoin') || q.includes('btc') || q.includes('crypto')) return responses.bitcoin;
+                if (q.includes('gold') || q.includes('precious')) return responses.gold;
+                if (q.includes('background') || q.includes('bio') || q.includes('education') || q.includes('family')) return responses.background;
+                if (q.includes('crisis') || q.includes('2008') || q.includes('emergency')) return responses.crisis;
+                return responses.default;
+            }
+
+            function addMessage(text, isUser) {
+                const div = document.createElement('div');
+                div.className = `chat-msg ${isUser ? 'user' : 'bot'}`;
+                div.style.cssText = `background: ${isUser ? 'var(--accent)' : 'var(--card)'}; padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; ${isUser ? 'margin-left: 20%;' : 'margin-right: 20%;'}`;
+                div.innerHTML = isUser ? text : `<strong style="color: var(--accent);">Starclawd:</strong> ${text}`;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const question = chatInput.value.trim();
+                if (!question) return;
+                
+                addMessage(question, true);
+                chatInput.value = '';
+                
+                // Simulate thinking
+                chatStatus.textContent = 'Thinking...';
+                setTimeout(() => {
+                    const response = getResponse(question);
+                    addMessage(response, false);
+                    chatStatus.textContent = '';
+                }, 500 + Math.random() * 500);
+            });
+        </script>
+        
+        <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">
+            <em>This is a simple Q&A bot with pre-loaded knowledge. For complex questions, reach out to <a href="https://t.me/starclawdbot" target="_blank">@starclawdbot on Telegram</a>.</em>
+        </p>
+        <p style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">
             <em>Disclaimer: This is research and analysis, not investment advice. All counterfactual scenarios are speculative based on Warsh's public statements and voting record.</em>
         </p>
     </div>
